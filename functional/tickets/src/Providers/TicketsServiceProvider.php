@@ -3,6 +3,7 @@
 namespace Functional\Tickets\Providers;
 
 use Functional\Tickets\Access\Controls\TicketControl;
+use Functional\Tickets\Console\Commands\EscalateOverdueTicketsCommand;
 use Functional\Tickets\Database\Seeders\TicketAccessSeeder;
 use Functional\Tickets\Database\Seeders\TicketsSeeder;
 use Functional\Tickets\Events\TicketAssigned;
@@ -16,20 +17,21 @@ class TicketsServiceProvider extends LayerServiceProvider
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
-            $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
+            $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
             $this->loadSeeders([TicketAccessSeeder::class, TicketsSeeder::class]);
+            $this->commands([EscalateOverdueTicketsCommand::class]);
         }
 
-        $this->loadTranslationsFrom(__DIR__ . '/../../lang', 'tickets');
-        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'tickets');
+        $this->loadTranslationsFrom(__DIR__.'/../../lang', 'tickets');
+        $this->loadViewsFrom(__DIR__.'/../../resources/views', 'tickets');
 
         $this->registerListeners();
 
         $this->withRouting(
-            web: __DIR__ . '/../../routes/web.php',
-            api: __DIR__ . '/../../routes/api.php',
-            commands: __DIR__ . '/../../routes/console.php',
-            channels: __DIR__ . '/../../routes/channels.php',
+            web: __DIR__.'/../../routes/web.php',
+            api: __DIR__.'/../../routes/api.php',
+            commands: __DIR__.'/../../routes/console.php',
+            channels: __DIR__.'/../../routes/channels.php',
         );
     }
 
@@ -48,6 +50,6 @@ class TicketsServiceProvider extends LayerServiceProvider
      */
     public function register(): void
     {
-        (new Access())->addControl(new TicketControl());
+        (new Access)->addControl(new TicketControl);
     }
 }

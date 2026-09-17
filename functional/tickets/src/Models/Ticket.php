@@ -31,6 +31,7 @@ use Lomkit\Access\Controls\HasControl;
  * @property TicketPriority $priority
  * @property Carbon|null $resolved_at
  * @property bool|null $sla_met
+ * @property Carbon|null $escalated_at
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon|null $deleted_at
@@ -82,6 +83,7 @@ class Ticket extends Model
             'priority' => TicketPriority::class,
             'resolved_at' => 'datetime',
             'sla_met' => 'boolean',
+            'escalated_at' => 'datetime',
         ];
     }
 
