@@ -1,0 +1,34 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/xefi/phpstan-xefi-rules/extension.neon
+
+parameters:
+    paths:
+        - functional
+        - technical
+        - routes
+        - tests
+
+    excludePaths:
+        - '*/database/migrations/*'
+        - '*/vendor/*'
+
+    level: 6
+
+    tmpDir: storage/phpstan
+
+    stubFiles:
+        - stubs/xefi-faker.stub
+
+    ignoreErrors:
+        -
+            # lomkit/laravel-access-control registers `controlled()`/`uncontrolled()` as a
+            # runtime macro on the query builder. Larastan's macro-reflection extension
+            # resolves macros through Illuminate\Support\Traits\Macroable, but Laravel 13's
+            # Eloquent Builder forwards macro calls to the underlying query builder instead of
+            # using that trait directly, so the macro is invisible to static analysis.
+            message: '#^Call to an undefined method Illuminate\\(Database\\Eloquent|Contracts\\Database\\Eloquent)\\Builder(<.*>)?::(un)?controlled\(\)\.$#'
+            paths:
+                - functional/tickets/src/Livewire/TicketList.php
+                - technical/framework/src/Rest/Resources/Resource.php
+                - functional/tickets/tests/Feature/TicketAccessControlTest.php

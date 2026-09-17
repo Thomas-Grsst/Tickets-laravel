@@ -13,7 +13,9 @@ class NotifyTechnicianOfTicketAssignment implements ShouldQueue
 
     /**
      * The listener re-reads the ticket on the worker, so it must not be queued before the
-     * assignment transaction commits.
+     * assignment transaction commits. Name is fixed by Laravel's queue interaction contract.
+     *
+     * @phpstan-ignore xefi.booleanPropertyNaming
      */
     public bool $afterCommit = true;
 

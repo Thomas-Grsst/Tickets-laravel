@@ -27,7 +27,7 @@ class TicketForm extends Component
 
     public string $priority = '';
 
-    public bool $canEdit = false;
+    public bool $isEditable = false;
 
     public function mount(?Ticket $ticket = null): void
     {
@@ -38,19 +38,19 @@ class TicketForm extends Component
             $this->title = $ticket->title;
             $this->description = $ticket->description;
             $this->priority = $ticket->priority->value;
-            $this->canEdit = Gate::allows('update', $ticket);
+            $this->isEditable = Gate::allows('update', $ticket);
 
             return;
         }
 
         $this->authorize('create', Ticket::class);
         $this->priority = TicketPriority::Normal->value;
-        $this->canEdit = true;
+        $this->isEditable = true;
     }
 
     public function save(): void
     {
-        $data = $this->validate([
+        $validated = $this->validate([
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'priority' => ['required', Rule::enum(TicketPriority::class)],
@@ -58,14 +58,14 @@ class TicketForm extends Component
 
         if ($this->ticket) {
             $this->authorize('update', $this->ticket);
-            $this->ticket->update($data);
+            $this->ticket->update($validated);
 
             session()->flash('success', __('tickets::messages.form.success.updated'));
 
             return;
         }
 
-        $this->ticket = Ticket::create($data + ['requester_id' => auth()->id()]);
+        $this->ticket = Ticket::create($validated + ['requester_id' => auth()->id()]);
 
         session()->flash('success', __('tickets::messages.form.success.created'));
 
@@ -75,41 +75,42 @@ class TicketForm extends Component
     public function assign(): void
     {
         $this->authorize('assign', $this->ticket);
-        $this->applyTransition(fn () => (new AssignTicket())($this->ticket, auth()->user()));
+        $this->applyTransition(fn () => (new AssignTicket)($this->ticket, auth()->user()));
     }
 
     public function unassign(): void
     {
         $this->authorize('assign', $this->ticket);
-        $this->applyTransition(fn () => (new UnassignTicket())($this->ticket));
+        $this->applyTransition(fn () => (new UnassignTicket)($this->ticket));
     }
 
     public function startProgress(): void
     {
         $this->authorize('update', $this->ticket);
-        $this->applyTransition(fn () => (new StartTicketProgress())($this->ticket));
+        $this->applyTransition(fn () => (new StartTicketProgress)($this->ticket));
     }
 
     public function resolve(): void
     {
         $this->authorize('update', $this->ticket);
-        $this->applyTransition(fn () => (new ResolveTicket())($this->ticket));
+        $this->applyTransition(fn () => (new ResolveTicket)($this->ticket));
     }
 
     public function reopen(): void
     {
         $this->authorize('update', $this->ticket);
-        $this->applyTransition(fn () => (new ReopenTicket())($this->ticket));
+        $this->applyTransition(fn () => (new ReopenTicket)($this->ticket));
     }
 
     public function close(): void
     {
         $this->authorize('close', $this->ticket);
-        $this->applyTransition(fn () => (new CloseTicket())($this->ticket));
+        $this->applyTransition(fn () => (new CloseTicket)($this->ticket));
     }
 
     private function applyTransition(callable $action): void
     {
+        // @phpstan-ignore xefi.noTryCatch (converts the one expected transition conflict into a user-facing flash message, per TP6)
         try {
             $action();
         } catch (IllegalTicketTransitionException) {
@@ -121,7 +122,7 @@ class TicketForm extends Component
         $this->ticket->refresh();
 
         session()->flash('success', __('tickets::messages.form.success.transitioned', [
-            'status' => __('tickets::messages.status.' . $this->ticket->status->value),
+            'status' => __('tickets::messages.status.'.$this->ticket->status->value),
         ]));
     }
 
