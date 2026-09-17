@@ -5,6 +5,7 @@ namespace Functional\Tickets\Database\Seeders;
 use DateTimeInterface;
 use Functional\Tickets\Enums\TicketPriority;
 use Functional\Tickets\Enums\TicketStatus;
+use Functional\Tickets\Models\Attachment;
 use Functional\Tickets\Models\Comment;
 use Functional\Tickets\Models\Ticket;
 use Functional\Users\Models\User;
@@ -15,9 +16,9 @@ class TicketsSeeder extends Seeder
 {
     public function run(): void
     {
-        $requesters  = User::factory()->count(6)->create();
+        $requesters = User::factory()->count(6)->create();
         $technicians = User::factory()->count(4)->create();
-        $managers    = User::factory()->count(2)->create();
+        $managers = User::factory()->count(2)->create();
 
         $commentAuthors = $requesters->concat($technicians)->concat($managers);
 
@@ -30,6 +31,13 @@ class TicketsSeeder extends Seeder
                     ->for($ticket)
                     ->recycle($commentAuthors)
                     ->create();
+
+                if (faker()->boolean(40)) {
+                    Attachment::factory()
+                        ->for($ticket)
+                        ->for($ticket->requester, 'uploader')
+                        ->create();
+                }
             }
         }
 
@@ -45,8 +53,8 @@ class TicketsSeeder extends Seeder
     }
 
     /**
-     * @param Collection<int, User> $requesters
-     * @param Collection<int, User> $technicians
+     * @param  Collection<int, User>  $requesters
+     * @param  Collection<int, User>  $technicians
      */
     private function createTicket(
         TicketStatus $status,
@@ -61,8 +69,8 @@ class TicketsSeeder extends Seeder
         }
 
         return $factory->create([
-            'status'      => $status,
-            'priority'    => $priority,
+            'status' => $status,
+            'priority' => $priority,
             'resolved_at' => $this->resolvedAtFor($status),
         ]);
     }

@@ -41,21 +41,21 @@
     <form wire:submit="save" class="space-y-4 rounded-lg border border-neutral-200 bg-brand-white p-6">
         <div>
             <label for="title" class="mb-1 block text-sm font-medium text-neutral-700">{{ __('tickets::messages.form.title') }}</label>
-            <input id="title" type="text" wire:model="title" @disabled(! $canEdit)
+            <input id="title" type="text" wire:model="title" @disabled(! $isEditable)
                    class="w-full rounded-md border border-neutral-300 px-3 py-2 focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red disabled:bg-neutral-100 disabled:text-neutral-500">
             @error('title') <p class="mt-1 text-sm text-brand-red">{{ $message }}</p> @enderror
         </div>
 
         <div>
             <label for="description" class="mb-1 block text-sm font-medium text-neutral-700">{{ __('tickets::messages.form.description') }}</label>
-            <textarea id="description" rows="5" wire:model="description" @disabled(! $canEdit)
+            <textarea id="description" rows="5" wire:model="description" @disabled(! $isEditable)
                       class="w-full rounded-md border border-neutral-300 px-3 py-2 focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red disabled:bg-neutral-100 disabled:text-neutral-500"></textarea>
             @error('description') <p class="mt-1 text-sm text-brand-red">{{ $message }}</p> @enderror
         </div>
 
         <div>
             <label for="priority" class="mb-1 block text-sm font-medium text-neutral-700">{{ __('tickets::messages.form.priority') }}</label>
-            <select id="priority" wire:model="priority" @disabled(! $canEdit)
+            <select id="priority" wire:model="priority" @disabled(! $isEditable)
                     class="w-full rounded-md border border-neutral-300 px-3 py-2 focus:border-brand-red focus:outline-none focus:ring-1 focus:ring-brand-red disabled:bg-neutral-100 disabled:text-neutral-500">
                 @foreach ($priorities as $option)
                     <option value="{{ $option->value }}">{{ __('tickets::messages.priority.' . $option->value) }}</option>
@@ -64,10 +64,14 @@
             @error('priority') <p class="mt-1 text-sm text-brand-red">{{ $message }}</p> @enderror
         </div>
 
-        @if ($canEdit)
+        @if ($isEditable)
             <button type="submit" class="rounded-md bg-brand-red px-4 py-2 font-medium text-brand-white hover:bg-brand-red-dark">
                 {{ $ticket ? __('tickets::messages.form.submit_update') : __('tickets::messages.form.submit_create') }}
             </button>
         @endif
     </form>
+
+    @if ($ticket)
+        @livewire(\Functional\Tickets\Livewire\TicketAttachments::class, ['ticket' => $ticket], key('attachments-' . $ticket->id))
+    @endif
 </div>

@@ -82,4 +82,16 @@ return [
         'comment_placeholder' => 'Write a comment…',
         'add_comment' => 'Add comment',
     ],
+
+    'attachments' => [
+        'title' => 'Attachments',
+        'empty' => 'No files attached yet.',
+        'upload' => 'Upload',
+        'delete' => 'Delete',
+        'uploaded_by' => 'Uploaded by :name',
+        'success' => [
+            'uploaded' => 'File uploaded.',
+            'deleted' => 'File deleted.',
+        ],
+    ],
 ];
