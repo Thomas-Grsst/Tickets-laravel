@@ -29,6 +29,19 @@ class TicketList extends Component
     #[Url]
     public string $direction = 'desc';
 
+    /**
+     * The channel name embeds the viewer's own id, so Livewire subscribes each visitor to
+     * their own private channel — never a shared one nobody has to authorize per row.
+     *
+     * @return array<string, string>
+     */
+    protected function getListeners(): array
+    {
+        return [
+            'echo-private:users.'.auth()->id().'.tickets,.ticket.assigned' => '$refresh',
+        ];
+    }
+
     public function updatedStatus(): void
     {
         $this->resetPage();
