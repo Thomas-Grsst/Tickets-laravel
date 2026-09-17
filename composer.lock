@@ -589,9 +589,11 @@
             "dist": {
                 "type": "path",
                 "url": "./functional/tickets",
-                "reference": "3b771dfbfd2fed903445aaa1e2af11f3a90387ca"
+                "reference": "8ad34d31bd546dc67e99a260d1e74fc746f5e9b7"
             },
             "require": {
+                "functional/users": "*",
+                "technical/framework": "*",
                 "xefi/laravel-osdd": "*"
             },
             "type": "layer",
@@ -619,9 +621,10 @@
             "dist": {
                 "type": "path",
                 "url": "./functional/users",
-                "reference": "f0a6fa248de0a1d7694ecaceaebd2599c7bca9e8"
+                "reference": "c40c391d57c690d0bdeb30befc0a3e468f46d991"
             },
             "require": {
+                "technical/framework": "*",
                 "xefi/laravel-osdd": "*"
             },
             "type": "layer",
