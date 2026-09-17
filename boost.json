@@ -3,16 +3,25 @@
     "guidelines": true,
     "mcp": true,
     "nightwatch": false,
-    "sail": true,
     "packages": [
-        "xefi/laravel-osdd"
+        "xefi/laravel-osdd",
+        "lomkit/laravel-rest-api",
+        "lomkit/laravel-access-control",
+        "spatie/laravel-permission",
+        "xefi/faker-php-laravel"
     ],
+    "sail": true,
     "skills": [
         "infer-conventions",
         "deploying-to-cloud",
         "laravel-best-practices",
         "testing-best-practices",
         "livewire-development",
-        "tailwindcss-development"
+        "tailwindcss-development",
+        "laravel-access-control",
+        "laravel-rest-api",
+        "laravel-permission-development",
+        "laravel-osdd",
+        "faker-php-laravel-development"
     ]
 }
