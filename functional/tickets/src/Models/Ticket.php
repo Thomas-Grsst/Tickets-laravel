@@ -5,9 +5,11 @@ namespace Functional\Tickets\Models;
 use Functional\Tickets\Database\Factories\TicketFactory;
 use Functional\Tickets\Enums\TicketPriority;
 use Functional\Tickets\Enums\TicketStatus;
+use Functional\Tickets\Policies\TicketPolicy;
 use Functional\Users\Models\User;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -26,6 +28,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'resolved_at',
 ])]
 #[UseFactory(TicketFactory::class)]
+#[UsePolicy(TicketPolicy::class)]
 class Ticket extends Model
 {
     use HasFactory;
@@ -40,8 +43,8 @@ class Ticket extends Model
     protected function casts(): array
     {
         return [
-            'status'      => TicketStatus::class,
-            'priority'    => TicketPriority::class,
+            'status' => TicketStatus::class,
+            'priority' => TicketPriority::class,
             'resolved_at' => 'datetime',
         ];
     }
