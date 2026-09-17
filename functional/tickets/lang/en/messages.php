@@ -57,6 +57,22 @@ return [
         ],
     ],
 
+    'import' => [
+        'rejection' => [
+            'column_count' => 'The row has :found column(s) where the header declares :expected.',
+            'unknown_requester' => 'No user is registered with the address :email.',
+        ],
+        'console' => [
+            'unreadable' => 'No readable CSV file at :path.',
+            'queued' => 'Import of :path queued — the report is written to the log once it runs.',
+            'summary' => 'Rows read: :read — tickets created: :created, rows rejected: :rejected.',
+            'columns' => [
+                'line' => 'Line',
+                'reason' => 'Rejection reason',
+            ],
+        ],
+    ],
+
     'change_history' => [
         'author_kind' => [
             'user' => 'User',
