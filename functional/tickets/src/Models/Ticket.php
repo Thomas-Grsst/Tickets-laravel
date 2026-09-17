@@ -20,6 +20,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Lomkit\Access\Controls\HasControl;
+use Technical\Framework\Concerns\HasChangeHistory;
+use Technical\Framework\Concerns\HistorizesChanges;
 
 /**
  * @property int $id
@@ -51,8 +53,9 @@ use Lomkit\Access\Controls\HasControl;
 ])]
 #[UseFactory(TicketFactory::class)]
 #[UsePolicy(TicketPolicy::class)]
-class Ticket extends Model
+class Ticket extends Model implements HistorizesChanges
 {
+    use HasChangeHistory;
     use HasControl;
 
     /** @use HasFactory<TicketFactory> */
@@ -115,5 +118,11 @@ class Ticket extends Model
     public function prunable(): Builder
     {
         return static::where('deleted_at', '<=', now()->subDays(self::SOFT_DELETED_RETENTION_DAYS));
+    }
+
+    /** @return list<string> */
+    public function historizedAttributes(): array
+    {
+        return ['status', 'priority', 'assigned_technician_id'];
     }
 }

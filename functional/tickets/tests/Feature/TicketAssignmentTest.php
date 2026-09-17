@@ -3,6 +3,7 @@
 namespace Functional\Tickets\Tests\Feature;
 
 use Functional\Tickets\Enums\TicketPermission;
+use Functional\Tickets\Enums\TicketPriority;
 use Functional\Tickets\Enums\TicketStatus;
 use Functional\Tickets\Models\Ticket;
 use Functional\Tickets\Notifications\TicketAssignedNotification;
@@ -145,5 +146,43 @@ class TicketAssignmentTest extends TestCase
         $this->assertSame(TicketStatus::InProgress, $ticket->status);
         $this->assertNull($ticket->resolved_at);
         $this->assertNull($ticket->sla_met);
+    }
+
+    public function test_assigning_a_critical_ticket_notifies_over_every_channel(): void
+    {
+        Notification::fake();
+        Sanctum::actingAs($this->manager);
+
+        $ticket = Ticket::factory()->create(['status' => TicketStatus::Open, 'priority' => TicketPriority::Critical]);
+
+        $this->postJson('/api/v1/tickets/actions/assign-ticket', [
+            'resources' => [$ticket->id],
+            'fields' => [['name' => 'technician_id', 'value' => $this->technician->id]],
+        ])->assertOk();
+
+        Notification::assertSentTo(
+            $this->technician,
+            TicketAssignedNotification::class,
+            fn (TicketAssignedNotification $notification) => $notification->via($this->technician) === ['mail', 'urgent', 'immediate-alert'],
+        );
+    }
+
+    public function test_assigning_a_low_priority_ticket_only_notifies_by_mail(): void
+    {
+        Notification::fake();
+        Sanctum::actingAs($this->manager);
+
+        $ticket = Ticket::factory()->create(['status' => TicketStatus::Open, 'priority' => TicketPriority::Low]);
+
+        $this->postJson('/api/v1/tickets/actions/assign-ticket', [
+            'resources' => [$ticket->id],
+            'fields' => [['name' => 'technician_id', 'value' => $this->technician->id]],
+        ])->assertOk();
+
+        Notification::assertSentTo(
+            $this->technician,
+            TicketAssignedNotification::class,
+            fn (TicketAssignedNotification $notification) => $notification->via($this->technician) === ['mail'],
+        );
     }
 }

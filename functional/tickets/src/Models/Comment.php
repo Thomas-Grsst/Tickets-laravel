@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
+use Technical\Framework\Concerns\HasChangeHistory;
+use Technical\Framework\Concerns\HistorizesChanges;
 
 /**
  * @property int $id
@@ -30,8 +32,10 @@ use Illuminate\Support\Carbon;
 ])]
 #[UseFactory(CommentFactory::class)]
 #[UsePolicy(CommentPolicy::class)]
-class Comment extends Model
+class Comment extends Model implements HistorizesChanges
 {
+    use HasChangeHistory;
+
     /** @use HasFactory<CommentFactory> */
     use HasFactory;
 
@@ -45,5 +49,11 @@ class Comment extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    /** @return list<string> */
+    public function historizedAttributes(): array
+    {
+        return ['body'];
     }
 }

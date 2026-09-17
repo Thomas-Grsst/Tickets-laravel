@@ -8,7 +8,10 @@ use Functional\Tickets\Database\Seeders\TicketAccessSeeder;
 use Functional\Tickets\Database\Seeders\TicketsSeeder;
 use Functional\Tickets\Events\TicketAssigned;
 use Functional\Tickets\Listeners\NotifyTechnicianOfTicketAssignment;
+use Functional\Tickets\Notifications\Channels\ImmediateAlertChannel;
+use Functional\Tickets\Notifications\Channels\UrgentChannel;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Notification;
 use Lomkit\Access\Access;
 use Xefi\LaravelOSDD\LayerServiceProvider;
 
@@ -26,6 +29,7 @@ class TicketsServiceProvider extends LayerServiceProvider
         $this->loadViewsFrom(__DIR__.'/../../resources/views', 'tickets');
 
         $this->registerListeners();
+        $this->registerNotificationChannels();
 
         $this->withRouting(
             web: __DIR__.'/../../routes/web.php',
@@ -42,6 +46,16 @@ class TicketsServiceProvider extends LayerServiceProvider
     private function registerListeners(): void
     {
         Event::listen(TicketAssigned::class, NotifyTechnicianOfTicketAssignment::class);
+    }
+
+    /**
+     * Registers the priority-driven notification channels the strategy resolver can hand
+     * out. `urgent` and `immediate-alert` simulate an external system with a structured log.
+     */
+    private function registerNotificationChannels(): void
+    {
+        Notification::extend('urgent', fn () => new UrgentChannel);
+        Notification::extend('immediate-alert', fn () => new ImmediateAlertChannel);
     }
 
     /**
