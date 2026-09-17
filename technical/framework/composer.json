@@ -1,0 +1,25 @@
+{
+    "name": "technical/framework",
+    "description": "",
+    "type": "layer",
+    "version": "1.0.0",
+    "require": {
+        "xefi/laravel-osdd": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Technical\\Framework\\": "src/",
+            "Technical\\Framework\\Database\\Seeders\\": "database/seeders/",
+            "Technical\\Framework\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Technical\\Framework\\Providers\\FrameworkServiceProvider"
+            ]
+        }
+    }
+}

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "919c3644c619bc9bc66a3338f9af407b",
+    "content-hash": "32d498bbbe7f5c1bfe4e626f61760e35",
     "packages": [
         {
             "name": "brick/math",
@@ -6262,6 +6262,36 @@
                 }
             ],
             "time": "2026-09-03T16:02:27+00:00"
+        },
+        {
+            "name": "technical/framework",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "./technical/framework",
+                "reference": "cd1d113736d57173c797c7d69dd0c57e6507ffb1"
+            },
+            "require": {
+                "xefi/laravel-osdd": "*"
+            },
+            "type": "layer",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Technical\\Framework\\Providers\\FrameworkServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Technical\\Framework\\": "src/",
+                    "Technical\\Framework\\Database\\Seeders\\": "database/seeders/",
+                    "Technical\\Framework\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "technical/osdd",

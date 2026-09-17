@@ -19,7 +19,8 @@
         "xefi/laravel-osdd": "^2.0",
         "functional/users": "*",
         "technical/osdd": "*",
-        "functional/tickets": "*"
+        "functional/tickets": "*",
+        "technical/framework": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
