@@ -6,6 +6,7 @@ use Carbon\CarbonInterface;
 use Functional\Tickets\Database\Factories\TicketFactory;
 use Functional\Tickets\Enums\TicketPriority;
 use Functional\Tickets\Enums\TicketStatus;
+use Functional\Tickets\Models\Concerns\HistorizesChanges;
 use Functional\Tickets\Policies\TicketPolicy;
 use Functional\Users\Models\User;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -50,6 +51,7 @@ class Ticket extends Model
 {
     use HasControl;
     use HasFactory;
+    use HistorizesChanges;
     use Prunable;
     use SoftDeletes;
 
@@ -74,6 +76,18 @@ class Ticket extends Model
             'sla_met' => 'boolean',
             'escalated_at' => 'datetime',
         ];
+    }
+
+    /**
+     * The three columns a ticket's handling story is told with: where it stands, how
+     * urgent it is, and who owns it. Title and description are the requester's own words
+     * rather than a handling decision, and timestamps restate what the row already says.
+     *
+     * @return list<string>
+     */
+    public function historizedAttributes(): array
+    {
+        return ['status', 'priority', 'assigned_technician_id'];
     }
 
     public function requester(): BelongsTo

@@ -57,6 +57,13 @@ return [
         ],
     ],
 
+    'change_history' => [
+        'author_kind' => [
+            'user' => 'User',
+            'system' => 'System',
+        ],
+    ],
+
     'nav' => [
         'tickets' => 'Tickets',
         'new_ticket' => 'New ticket',
