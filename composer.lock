@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bea4576848c15ef6948f9097f8dea0ac",
+    "content-hash": "919c3644c619bc9bc66a3338f9af407b",
     "packages": [
         {
             "name": "brick/math",
@@ -582,6 +582,66 @@
                 }
             ],
             "time": "2025-12-03T09:33:47+00:00"
+        },
+        {
+            "name": "functional/tickets",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "./functional/tickets",
+                "reference": "3b771dfbfd2fed903445aaa1e2af11f3a90387ca"
+            },
+            "require": {
+                "xefi/laravel-osdd": "*"
+            },
+            "type": "layer",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Functional\\Tickets\\Providers\\TicketsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Functional\\Tickets\\": "src/",
+                    "Functional\\Tickets\\Database\\Seeders\\": "database/seeders/",
+                    "Functional\\Tickets\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "functional/users",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "./functional/users",
+                "reference": "f0a6fa248de0a1d7694ecaceaebd2599c7bca9e8"
+            },
+            "require": {
+                "xefi/laravel-osdd": "*"
+            },
+            "type": "layer",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Functional\\Users\\Providers\\UsersServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Functional\\Users\\": "src/",
+                    "Functional\\Users\\Database\\Seeders\\": "database/seeders/",
+                    "Functional\\Users\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "graham-campbell/result-type",
@@ -6202,6 +6262,36 @@
                 }
             ],
             "time": "2026-09-03T16:02:27+00:00"
+        },
+        {
+            "name": "technical/osdd",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "./technical/osdd",
+                "reference": "18610ce12a3a2cf5a7e9cb7836a05da8951ce1f9"
+            },
+            "require": {
+                "xefi/laravel-osdd": "*"
+            },
+            "type": "layer",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Technical\\Osdd\\Providers\\OsddServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Technical\\Osdd\\": "src/",
+                    "Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "description": "OSDD technical configuration layer",
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",

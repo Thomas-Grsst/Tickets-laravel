@@ -16,7 +16,10 @@
         "lomkit/laravel-access-control": "^0.5.0",
         "lomkit/laravel-rest-api": "^2.23",
         "spatie/laravel-permission": "^8.3",
-        "xefi/laravel-osdd": "^2.0"
+        "xefi/laravel-osdd": "^2.0",
+        "functional/users": "*",
+        "technical/osdd": "*",
+        "functional/tickets": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -34,9 +37,7 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/",
-            "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "App\\": "app/"
         }
     },
     "autoload-dev": {
@@ -95,5 +96,15 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "path",
+            "url": "./functional/*"
+        },
+        {
+            "type": "path",
+            "url": "./technical/*"
+        }
+    ]
 }
