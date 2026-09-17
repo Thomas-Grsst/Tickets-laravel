@@ -589,10 +589,12 @@
             "dist": {
                 "type": "path",
                 "url": "./functional/tickets",
-                "reference": "8ad34d31bd546dc67e99a260d1e74fc746f5e9b7"
+                "reference": "6a414a16e2a7d70f0d17b28e56d7ec8d7767ee7e"
             },
             "require": {
                 "functional/users": "*",
+                "lomkit/laravel-access-control": "^0.5.0",
+                "spatie/laravel-permission": "^8.3",
                 "technical/framework": "*",
                 "xefi/laravel-osdd": "*"
             },
@@ -621,9 +623,10 @@
             "dist": {
                 "type": "path",
                 "url": "./functional/users",
-                "reference": "c40c391d57c690d0bdeb30befc0a3e468f46d991"
+                "reference": "b5fd9a75eb51db6bdad96d4e65e978b12f7c051a"
             },
             "require": {
+                "spatie/laravel-permission": "^8.3",
                 "technical/framework": "*",
                 "xefi/laravel-osdd": "*"
             },
@@ -6335,9 +6338,10 @@
             "dist": {
                 "type": "path",
                 "url": "./technical/framework",
-                "reference": "cd1d113736d57173c797c7d69dd0c57e6507ffb1"
+                "reference": "1640e4cc7c527e32ab0a16ed8d494f4e37ac1fec"
             },
             "require": {
+                "lomkit/laravel-access-control": "^0.5.0",
                 "xefi/laravel-osdd": "*"
             },
             "type": "layer",

@@ -2,7 +2,10 @@
 
 namespace Functional\Tickets\Providers;
 
+use Functional\Tickets\Access\Controls\TicketControl;
+use Functional\Tickets\Database\Seeders\TicketAccessSeeder;
 use Functional\Tickets\Database\Seeders\TicketsSeeder;
+use Lomkit\Access\Access;
 use Xefi\LaravelOSDD\LayerServiceProvider;
 
 class TicketsServiceProvider extends LayerServiceProvider
@@ -11,7 +14,7 @@ class TicketsServiceProvider extends LayerServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
-            $this->loadSeeders([TicketsSeeder::class]);
+            $this->loadSeeders([TicketAccessSeeder::class, TicketsSeeder::class]);
         }
 
         $this->withRouting(
@@ -22,8 +25,12 @@ class TicketsServiceProvider extends LayerServiceProvider
         );
     }
 
+    /**
+     * The package discovers controls by scanning app/Access/Controls, a path no OSDD
+     * layer has, so the control is handed to the registry explicitly instead.
+     */
     public function register(): void
     {
-        //
+        (new Access())->addControl(new TicketControl());
     }
 }

@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Lomkit\Access\Controls\HasControl;
 
 #[Fillable([
     'requester_id',
@@ -31,6 +32,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[UsePolicy(TicketPolicy::class)]
 class Ticket extends Model
 {
+    use HasControl;
     use HasFactory;
     use Prunable;
     use SoftDeletes;

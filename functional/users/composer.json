@@ -5,6 +5,7 @@
     "version": "1.0.0",
     "require": {
         "xefi/laravel-osdd": "*",
+        "spatie/laravel-permission": "^8.3",
         "technical/framework": "*"
     },
     "autoload": {

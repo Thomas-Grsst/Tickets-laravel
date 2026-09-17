@@ -6,6 +6,8 @@
     "require": {
         "xefi/laravel-osdd": "*",
         "functional/users": "*",
+        "lomkit/laravel-access-control": "^0.5.0",
+        "spatie/laravel-permission": "^8.3",
         "technical/framework": "*"
     },
     "autoload": {
