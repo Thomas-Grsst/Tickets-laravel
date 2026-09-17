@@ -1,5 +1,6 @@
 <?php
 
+use Functional\Tickets\Console\Commands\EscalateOverdueTicketsCommand;
 use Functional\Tickets\Models\Ticket;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -10,3 +11,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('model:prune', ['--model' => Ticket::class])->daily();
+
+Schedule::command(EscalateOverdueTicketsCommand::class)->daily();

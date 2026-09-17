@@ -18,4 +18,18 @@ enum TicketPriority: string
             self::Critical => 2,
         };
     }
+
+    /**
+     * The single rung an overdue ticket climbs. Critical is the top of the ladder, so it
+     * returns null and the caller reports the breach instead of raising the priority.
+     */
+    public function escalatesTo(): ?self
+    {
+        return match ($this) {
+            self::Low      => self::Normal,
+            self::Normal   => self::High,
+            self::High     => self::Critical,
+            self::Critical => null,
+        };
+    }
 }

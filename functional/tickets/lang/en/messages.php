@@ -20,6 +20,24 @@ return [
         'critical' => 'Critical',
     ],
 
+    'console' => [
+        'escalate' => [
+            'scanning' => 'Scanning unresolved tickets for SLA breaches…',
+            'summary' => 'Overdue: :overdue — escalated: :escalated, flagged at Critical: :flagged.',
+            'columns' => [
+                'id' => 'Ticket',
+                'title' => 'Title',
+                'priority' => 'Priority (after run)',
+                'age' => 'Age (h)',
+                'outcome' => 'Outcome',
+            ],
+            'outcome' => [
+                'escalated' => 'Escalated',
+                'flagged' => 'Flagged (already Critical)',
+            ],
+        ],
+    ],
+
     'attachments' => [
         'title' => 'Attachments',
         'empty' => 'No file attached to this ticket yet.',
