@@ -21,7 +21,9 @@ use Functional\Tickets\Notifying\Policies\LowPriorityNotificationPolicy;
 use Functional\Tickets\Notifying\Policies\NormalPriorityNotificationPolicy;
 use Functional\Tickets\Notifying\TicketNotificationPolicies;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Foundation\CachesRoutes;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Route;
 use Livewire\Livewire;
 use Lomkit\Access\Access;
 use Xefi\LaravelOSDD\LayerServiceProvider;
@@ -49,6 +51,22 @@ class TicketsServiceProvider extends LayerServiceProvider
             commands: __DIR__ . '/../../routes/console.php',
             channels: __DIR__ . '/../../routes/channels.php',
         );
+
+        $this->loadMcpRoutesFrom(__DIR__ . '/../../routes/ai.php');
+    }
+
+    /**
+     * `laravel/mcp` only ever looks at the application's own `routes/ai.php`, which an OSDD
+     * layer does not own, so the layer's MCP servers are registered the same way the package
+     * registers that file — a bare group, since `Mcp::web()` brings its own middleware.
+     */
+    private function loadMcpRoutesFrom(string $path): void
+    {
+        if ($this->app instanceof CachesRoutes && $this->app->routesAreCached()) {
+            return;
+        }
+
+        Route::group([], $path);
     }
 
     /**

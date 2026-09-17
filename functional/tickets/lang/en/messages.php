@@ -73,6 +73,12 @@ return [
         ],
     ],
 
+    'mcp' => [
+        'error' => [
+            'ticket_not_visible' => 'No ticket [:id] is visible to you. Search first, then use an id the search returned.',
+        ],
+    ],
+
     'change_history' => [
         'author_kind' => [
             'user' => 'User',
