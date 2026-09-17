@@ -4,6 +4,8 @@ use Functional\Tickets\Http\Controllers\ResolvedTicketsExportController;
 use Functional\Tickets\Http\Controllers\TicketAttachmentDestroyController;
 use Functional\Tickets\Http\Controllers\TicketAttachmentDownloadController;
 use Functional\Tickets\Http\Controllers\TicketAttachmentUploadController;
+use Functional\Tickets\Http\Controllers\TicketImportShowController;
+use Functional\Tickets\Http\Controllers\TicketImportUploadController;
 use Functional\Tickets\Rest\Controllers\TicketsController;
 use Illuminate\Support\Facades\Route;
 use Lomkit\Rest\Facades\Rest;
@@ -20,4 +22,9 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function (): void {
         ->name('tickets.attachments.download');
     Route::delete('tickets/{ticket}/attachments/{attachment}', TicketAttachmentDestroyController::class)
         ->name('tickets.attachments.destroy');
+
+    Route::post('tickets/imports', TicketImportUploadController::class)
+        ->name('tickets.imports.store');
+    Route::get('tickets/imports/{ticketImport}', TicketImportShowController::class)
+        ->name('tickets.imports.show');
 });
