@@ -1,0 +1,32 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/xefi/phpstan-xefi-rules/extension.neon
+
+parameters:
+    level: 5
+
+    paths:
+        - functional
+        - technical
+
+    scanFiles:
+        - faker_mixin.php
+
+    databaseMigrationsPath:
+        - functional/tickets/database/migrations
+        - functional/users/database/migrations
+        - technical/framework/database/migrations
+
+    ignoreErrors:
+        -
+            message: '#Call to an undefined method .*::controlled\(\)#'
+            identifier: method.notFound
+        -
+            message: '#Call to an undefined method Illuminate\\Testing\\TestResponse::assertSeeLivewire\(\)#'
+            identifier: method.notFound
+        -
+            message: '#A boolean property should start with "is"#'
+            path: functional/tickets/src/Listeners/NotifyTechnicianOfTicketAssignment.php
+        -
+            message: '#The up function has more than 40 code lines#'
+            path: technical/framework/database/migrations/2026_09_17_081223_create_permission_tables.php

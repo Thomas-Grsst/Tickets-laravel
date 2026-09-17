@@ -5,6 +5,7 @@ namespace Functional\Tickets\Tests\Feature\Actions;
 use Functional\Tickets\Actions\AssignTicket;
 use Functional\Tickets\Actions\UnassignTicket;
 use Functional\Tickets\Enums\TicketStatus;
+use Functional\Tickets\Exceptions\IllegalTicketTransitionException;
 use Functional\Tickets\Mail\TicketAssignedMail;
 use Functional\Tickets\Models\Ticket;
 use Functional\Tickets\Notifications\TicketAssignedNotification;
@@ -55,11 +56,10 @@ class AssignTicketNotifiesTechnicianTest extends TestCase
         $ticket = Ticket::factory()->create(['status' => TicketStatus::Closed]);
         $technician = User::factory()->create();
 
-        try {
-            app(AssignTicket::class)($ticket, $technician);
-        } catch (\Functional\Tickets\Exceptions\IllegalTicketTransitionException) {
-            // The absence of a notification is the assertion.
-        }
+        $this->assertThrows(
+            fn () => app(AssignTicket::class)($ticket, $technician),
+            IllegalTicketTransitionException::class,
+        );
 
         Notification::assertNothingSent();
     }

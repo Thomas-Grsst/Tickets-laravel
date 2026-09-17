@@ -8,7 +8,7 @@ use Functional\Tickets\Livewire\TicketList;
 use Functional\Tickets\Models\Ticket;
 use Functional\Tickets\Tests\Concerns\CreatesTicketProfiles;
 use Functional\Users\Models\User;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
@@ -93,8 +93,10 @@ class TicketListTest extends TestCase
         $component = Livewire::actingAs($manager)->test(TicketList::class);
 
         $component->assertViewHas('tickets', fn (LengthAwarePaginator $tickets): bool => $tickets->count() === 25 && $tickets->total() === 30);
-        $component->call('gotoPage', 2)
-            ->assertViewHas('tickets', fn (LengthAwarePaginator $tickets): bool => $tickets->count() === 5);
+
+        $component->call('gotoPage', 2);
+
+        $component->assertViewHas('tickets', fn (LengthAwarePaginator $tickets): bool => $tickets->count() === 5);
     }
 
     #[Test]
@@ -104,13 +106,14 @@ class TicketListTest extends TestCase
         Ticket::factory()->create(['title' => 'Alpha printer fault']);
         Ticket::factory()->create(['title' => 'Zulu printer fault']);
 
-        Livewire::actingAs($manager)
-            ->test(TicketList::class)
-            ->call('sortBy', 'title')
+        $component = Livewire::actingAs($manager)->test(TicketList::class);
+
+        $component->call('sortBy', 'title')
             ->assertSet('sort', 'title')
             ->assertSet('direction', 'asc')
-            ->assertViewHas('tickets', fn (LengthAwarePaginator $tickets): bool => $tickets->first()->title === 'Alpha printer fault')
-            ->call('sortBy', 'title')
+            ->assertViewHas('tickets', fn (LengthAwarePaginator $tickets): bool => $tickets->first()->title === 'Alpha printer fault');
+
+        $component->call('sortBy', 'title')
             ->assertSet('direction', 'desc')
             ->assertViewHas('tickets', fn (LengthAwarePaginator $tickets): bool => $tickets->first()->title === 'Zulu printer fault');
     }

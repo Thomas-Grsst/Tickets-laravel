@@ -16,6 +16,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Throwable;
 
 class TicketForm extends Component
 {
@@ -27,7 +28,7 @@ class TicketForm extends Component
 
     public string $priority = '';
 
-    public bool $canEdit = false;
+    public bool $isEditable = false;
 
     public function mount(?Ticket $ticket = null): void
     {
@@ -38,19 +39,19 @@ class TicketForm extends Component
             $this->title = $ticket->title;
             $this->description = $ticket->description;
             $this->priority = $ticket->priority->value;
-            $this->canEdit = Gate::allows('update', $ticket);
+            $this->isEditable = Gate::allows('update', $ticket);
 
             return;
         }
 
         $this->authorize('create', Ticket::class);
         $this->priority = TicketPriority::Normal->value;
-        $this->canEdit = true;
+        $this->isEditable = true;
     }
 
     public function save(): void
     {
-        $data = $this->validate([
+        $attributes = $this->validate([
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'priority' => ['required', Rule::enum(TicketPriority::class)],
@@ -58,14 +59,14 @@ class TicketForm extends Component
 
         if ($this->ticket) {
             $this->authorize('update', $this->ticket);
-            $this->ticket->update($data);
+            $this->ticket->update($attributes);
 
             session()->flash('success', __('tickets::messages.form.success.updated'));
 
             return;
         }
 
-        $this->ticket = Ticket::create($data + ['requester_id' => auth()->id()]);
+        $this->ticket = Ticket::create($attributes + ['requester_id' => auth()->id()]);
 
         session()->flash('success', __('tickets::messages.form.success.created'));
 
@@ -110,9 +111,19 @@ class TicketForm extends Component
 
     private function applyTransition(callable $action): void
     {
-        try {
-            $action();
-        } catch (IllegalTicketTransitionException) {
+        $refusal = rescue(
+            function () use ($action): ?IllegalTicketTransitionException {
+                $action();
+
+                return null;
+            },
+            fn (Throwable $exception): IllegalTicketTransitionException => $exception instanceof IllegalTicketTransitionException
+                ? $exception
+                : throw $exception,
+            report: false,
+        );
+
+        if ($refusal instanceof IllegalTicketTransitionException) {
             session()->flash('error', __('tickets::messages.form.error.transition'));
 
             return;

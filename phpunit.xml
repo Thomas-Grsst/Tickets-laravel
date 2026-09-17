@@ -20,6 +20,7 @@
     <exclude>
       <directory suffix=".php">**/database/migrations</directory>
       <directory suffix=".php">functional/*/tests</directory>
+      <directory suffix=".blade.php">**/resources/views</directory>
     </exclude>
   </source>
   <php>

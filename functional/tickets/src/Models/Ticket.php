@@ -2,6 +2,7 @@
 
 namespace Functional\Tickets\Models;
 
+use Carbon\CarbonInterface;
 use Functional\Tickets\Database\Factories\TicketFactory;
 use Functional\Tickets\Enums\TicketPriority;
 use Functional\Tickets\Enums\TicketStatus;
@@ -19,6 +20,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Lomkit\Access\Controls\HasControl;
 
+/**
+ * @property int             $id
+ * @property int             $requester_id
+ * @property ?int            $assigned_technician_id
+ * @property string          $title
+ * @property string          $description
+ * @property TicketStatus    $status
+ * @property TicketPriority  $priority
+ * @property ?CarbonInterface $resolved_at
+ * @property ?bool           $sla_met
+ * @property CarbonInterface  $created_at
+ * @property CarbonInterface  $updated_at
+ * @property ?CarbonInterface $deleted_at
+ */
 #[Fillable([
     'requester_id',
     'assigned_technician_id',
@@ -49,9 +64,6 @@ class Ticket extends Model
         'status' => TicketStatus::Open->value,
     ];
 
-    /**
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [

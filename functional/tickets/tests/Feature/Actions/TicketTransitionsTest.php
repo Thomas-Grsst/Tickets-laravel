@@ -124,11 +124,10 @@ class TicketTransitionsTest extends TestCase
         $ticket = Ticket::factory()->create(['status' => TicketStatus::Open]);
         $technician = User::factory()->create();
 
-        try {
-            app(ResolveTicket::class)($ticket);
-        } catch (IllegalTicketTransitionException) {
-            // The persisted state is the assertion, not the exception itself.
-        }
+        $this->assertThrows(
+            fn () => app(ResolveTicket::class)($ticket),
+            IllegalTicketTransitionException::class,
+        );
 
         $this->assertDatabaseHas('tickets', [
             'id' => $ticket->getKey(),

@@ -5,6 +5,7 @@ namespace Functional\Tickets\Tests\Feature\Jobs;
 use Functional\Tickets\Actions\ResolveTicket;
 use Functional\Tickets\Enums\TicketPriority;
 use Functional\Tickets\Enums\TicketStatus;
+use Functional\Tickets\Exceptions\IllegalTicketTransitionException;
 use Functional\Tickets\Exceptions\TicketSlaNotMeasurableException;
 use Functional\Tickets\Jobs\RecordTicketSlaCompliance;
 use Functional\Tickets\Models\Ticket;
@@ -79,11 +80,10 @@ class RecordTicketSlaComplianceTest extends TestCase
         Queue::fake();
         $ticket = Ticket::factory()->create(['status' => TicketStatus::Open]);
 
-        try {
-            app(ResolveTicket::class)($ticket);
-        } catch (\Functional\Tickets\Exceptions\IllegalTicketTransitionException) {
-            // The absence of a queued job is the assertion.
-        }
+        $this->assertThrows(
+            fn () => app(ResolveTicket::class)($ticket),
+            IllegalTicketTransitionException::class,
+        );
 
         Queue::assertNothingPushed();
     }
