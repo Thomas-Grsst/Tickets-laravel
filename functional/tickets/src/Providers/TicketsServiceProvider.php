@@ -9,10 +9,17 @@ use Functional\Tickets\Database\Seeders\TicketsSeeder;
 use Functional\Tickets\Events\TicketAssigned;
 use Functional\Tickets\Listeners\DeleteStoredAttachmentFile;
 use Functional\Tickets\Listeners\DeleteTicketAttachments;
+use Functional\Tickets\Listeners\NotifyAccordingToTicketPriority;
 use Functional\Tickets\Listeners\NotifyTechnicianOfTicketAssignment;
 use Functional\Tickets\Livewire\TicketAttachments;
 use Functional\Tickets\Models\Attachment;
 use Functional\Tickets\Models\Ticket;
+use Functional\Tickets\Notifying\Policies\CriticalPriorityNotificationPolicy;
+use Functional\Tickets\Notifying\Policies\HighPriorityNotificationPolicy;
+use Functional\Tickets\Notifying\Policies\LowPriorityNotificationPolicy;
+use Functional\Tickets\Notifying\Policies\NormalPriorityNotificationPolicy;
+use Functional\Tickets\Notifying\TicketNotificationPolicies;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
 use Lomkit\Access\Access;
@@ -50,6 +57,7 @@ class TicketsServiceProvider extends LayerServiceProvider
     private function registerListeners(): void
     {
         Event::listen(TicketAssigned::class, NotifyTechnicianOfTicketAssignment::class);
+        Event::listen(TicketAssigned::class, NotifyAccordingToTicketPriority::class);
 
         Attachment::deleted(static function (Attachment $attachment): void {
             app(DeleteStoredAttachmentFile::class)($attachment);
@@ -69,5 +77,29 @@ class TicketsServiceProvider extends LayerServiceProvider
         $this->overrideConfigFrom(__DIR__ . '/../../config/tickets.php', 'tickets');
 
         (new Access())->addControl(new TicketControl());
+
+        $this->registerNotificationPolicies();
+    }
+
+    /**
+     * The whole cost of a new priority tier: its class, and its line in this tag. The
+     * resolver is rebuilt per resolution so a tier tagged later — by a test, or by another
+     * layer — is picked up without this method knowing about it.
+     */
+    private function registerNotificationPolicies(): void
+    {
+        $this->app->tag([
+            LowPriorityNotificationPolicy::class,
+            NormalPriorityNotificationPolicy::class,
+            HighPriorityNotificationPolicy::class,
+            CriticalPriorityNotificationPolicy::class,
+        ], TicketNotificationPolicies::TAG);
+
+        $this->app->bind(
+            TicketNotificationPolicies::class,
+            static fn (Application $app): TicketNotificationPolicies => new TicketNotificationPolicies(
+                $app->tagged(TicketNotificationPolicies::TAG),
+            ),
+        );
     }
 }
