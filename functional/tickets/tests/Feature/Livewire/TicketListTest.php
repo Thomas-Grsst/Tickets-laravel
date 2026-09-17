@@ -2,6 +2,7 @@
 
 namespace Functional\Tickets\Tests\Feature\Livewire;
 
+use Functional\Tickets\Actions\StartTicketProgress;
 use Functional\Tickets\Enums\TicketPriority;
 use Functional\Tickets\Enums\TicketStatus;
 use Functional\Tickets\Livewire\TicketList;
@@ -158,6 +159,38 @@ class TicketListTest extends TestCase
             ->get(route('tickets.index'))
             ->assertSuccessful()
             ->assertSeeLivewire(TicketList::class);
+    }
+
+    #[Test]
+    public function it_opens_a_channel_only_for_the_tickets_it_listed(): void
+    {
+        $requester = $this->createRequester();
+        $own = Ticket::factory()->count(2)->for($requester, 'requester')->create();
+        Ticket::factory()->create();
+
+        $subscribedTicketIds = Livewire::actingAs($requester)
+            ->test(TicketList::class)
+            ->get('subscribedTicketIds');
+
+        sort($subscribedTicketIds);
+
+        $this->assertSame($own->pluck('id')->sort()->values()->all(), $subscribedTicketIds);
+    }
+
+    #[Test]
+    public function it_refreshes_against_the_access_controlled_query_when_a_broadcast_arrives(): void
+    {
+        $technician = $this->createTechnician();
+        $ticket = Ticket::factory()->for($technician, 'assignedTechnician')->create([
+            'status' => TicketStatus::Assigned,
+        ]);
+
+        $component = Livewire::actingAs($technician)->test(TicketList::class);
+
+        app(StartTicketProgress::class)($ticket);
+
+        $component->call('$refresh')
+            ->assertViewHas('tickets', fn (LengthAwarePaginator $tickets): bool => $tickets->first()->status === TicketStatus::InProgress);
     }
 
     #[Test]

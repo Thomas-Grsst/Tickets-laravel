@@ -1,4 +1,12 @@
 <div>
+    {{-- Opens one private channel per listed ticket and refreshes this component — and only
+         this component — whenever the server announces that one of those rows changed. --}}
+    <div
+        wire:ignore
+        x-data
+        x-effect="window.synchronizeTicketChannels($wire.subscribedTicketIds, () => $wire.$refresh())"
+    ></div>
+
     <div class="mb-6 flex items-center justify-between">
         <h1 class="text-2xl font-semibold text-brand-black">{{ __('tickets::messages.nav.tickets') }}</h1>
         <a href="{{ route('tickets.create') }}" class="rounded-md bg-brand-red px-4 py-2 text-sm font-medium text-brand-white hover:bg-brand-red-dark">

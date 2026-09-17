@@ -6,6 +6,7 @@ use Functional\Tickets\Enums\TicketPriority;
 use Functional\Tickets\Enums\TicketStatus;
 use Functional\Tickets\Models\Ticket;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -16,6 +17,17 @@ class TicketList extends Component
 
     /** @var list<string> */
     private const SORTABLE = ['title', 'status', 'priority', 'created_at'];
+
+    /**
+     * The tickets the browser holds an open private channel for — exactly the rows the
+     * access-controlled query just returned. Locked, so the page can only ever ask for the
+     * channels the server itself listed, and each of those is still authorised on
+     * subscription.
+     *
+     * @var list<int>
+     */
+    #[Locked]
+    public array $subscribedTicketIds = [];
 
     #[Url]
     public string $status = '';
@@ -62,6 +74,11 @@ class TicketList extends Component
             ->when($this->priority !== '', fn ($query) => $query->where('priority', $this->priority))
             ->orderBy($sort, $direction)
             ->paginate(25);
+
+        $this->subscribedTicketIds = $tickets->getCollection()
+            ->map(static fn (Ticket $ticket): int => (int) $ticket->getKey())
+            ->values()
+            ->all();
 
         return view('tickets::livewire.ticket-list', [
             'tickets' => $tickets,

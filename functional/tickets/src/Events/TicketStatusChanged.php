@@ -3,21 +3,27 @@
 namespace Functional\Tickets\Events;
 
 use Functional\Tickets\Broadcasting\TicketChannel;
+use Functional\Tickets\Enums\TicketStatus;
 use Functional\Tickets\Models\Ticket;
-use Functional\Users\Models\User;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TicketAssigned implements ShouldBroadcast
+/**
+ * A ticket moved from one lifecycle state to another. Fired by the single gate every
+ * transition goes through, so the six transition actions all announce themselves without
+ * each one remembering to.
+ */
+class TicketStatusChanged implements ShouldBroadcast
 {
     use Dispatchable;
     use SerializesModels;
 
     public function __construct(
         public Ticket $ticket,
-        public User $technician,
+        public TicketStatus $previousStatus,
+        public TicketStatus $currentStatus,
     ) {
     }
 
@@ -28,13 +34,12 @@ class TicketAssigned implements ShouldBroadcast
 
     public function broadcastAs(): string
     {
-        return 'ticket.assigned';
+        return 'ticket.status-changed';
     }
 
     /**
-     * The payload is an allow-list, not the ticket and not the technician: the client only
-     * needs to know which row went stale, and re-reads it through its own
-     * access-controlled query.
+     * The payload is an allow-list, not the ticket: the client only needs to know which
+     * row went stale, and re-reads it through its own access-controlled query.
      *
      * @return array<string, mixed>
      */
@@ -42,7 +47,7 @@ class TicketAssigned implements ShouldBroadcast
     {
         return [
             'id' => $this->ticket->getKey(),
-            'assigned_technician_id' => $this->technician->getKey(),
+            'status' => $this->currentStatus->value,
         ];
     }
 }
