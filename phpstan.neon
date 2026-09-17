@@ -32,3 +32,5 @@ parameters:
                 - functional/tickets/src/Livewire/TicketList.php
                 - technical/framework/src/Rest/Resources/Resource.php
                 - functional/tickets/tests/Feature/TicketAccessControlTest.php
+                - functional/tickets/src/Mcp/Tools/SearchTicketsTool.php
+                - functional/tickets/src/Mcp/Tools/ViewTicketTool.php

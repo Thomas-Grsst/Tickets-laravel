@@ -4,6 +4,7 @@ namespace Functional\Tickets\Livewire;
 
 use Functional\Tickets\Actions\AssignTicket;
 use Functional\Tickets\Actions\CloseTicket;
+use Functional\Tickets\Actions\CreateTicket;
 use Functional\Tickets\Actions\ReopenTicket;
 use Functional\Tickets\Actions\ResolveTicket;
 use Functional\Tickets\Actions\StartTicketProgress;
@@ -65,7 +66,7 @@ class TicketForm extends Component
             return;
         }
 
-        $this->ticket = Ticket::create($validated + ['requester_id' => auth()->id()]);
+        $this->ticket = (new CreateTicket)(auth()->user(), $validated);
 
         session()->flash('success', __('tickets::messages.form.success.created'));
 
