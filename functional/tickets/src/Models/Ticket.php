@@ -40,6 +40,16 @@ class Ticket extends Model
     private const SOFT_DELETED_RETENTION_DAYS = 90;
 
     /**
+     * Every ticket's life starts at the first state of the lifecycle table, whichever
+     * entry point creates it.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'status' => TicketStatus::Open->value,
+    ];
+
+    /**
      * @return array<string, string>
      */
     protected function casts(): array
@@ -48,6 +58,7 @@ class Ticket extends Model
             'status' => TicketStatus::class,
             'priority' => TicketPriority::class,
             'resolved_at' => 'datetime',
+            'sla_met' => 'boolean',
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace Functional\Tickets\Access\Perimeters;
 
+use Functional\Tickets\Enums\TicketAbility;
 use Functional\Tickets\Enums\TicketPermission;
 use Functional\Tickets\Models\Ticket;
 use Functional\Users\Models\User;
@@ -10,17 +11,13 @@ use Lomkit\Access\Perimeters\OverlayPerimeter;
 
 class OwnTicketsPerimeter extends OverlayPerimeter
 {
-    private const VIEW = 'view';
-
-    private const CREATE = 'create';
-
     public function __construct()
     {
         parent::__construct();
 
-        $this->allowed(fn (User $user, string $method): bool => match ($method) {
-            self::VIEW => $user->can(TicketPermission::ViewOwnTickets->value),
-            self::CREATE => $user->can(TicketPermission::CreateTicket->value),
+        $this->allowed(fn (User $user, string $method): bool => match (TicketAbility::tryFrom($method)) {
+            TicketAbility::View => $user->can(TicketPermission::ViewOwnTickets->value),
+            TicketAbility::Create => $user->can(TicketPermission::CreateTicket->value),
             default => false,
         });
 

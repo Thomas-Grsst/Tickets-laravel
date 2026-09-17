@@ -5,6 +5,9 @@ namespace Functional\Tickets\Providers;
 use Functional\Tickets\Access\Controls\TicketControl;
 use Functional\Tickets\Database\Seeders\TicketAccessSeeder;
 use Functional\Tickets\Database\Seeders\TicketsSeeder;
+use Functional\Tickets\Events\TicketAssigned;
+use Functional\Tickets\Listeners\NotifyTechnicianOfTicketAssignment;
+use Illuminate\Support\Facades\Event;
 use Lomkit\Access\Access;
 use Xefi\LaravelOSDD\LayerServiceProvider;
 
@@ -17,12 +20,26 @@ class TicketsServiceProvider extends LayerServiceProvider
             $this->loadSeeders([TicketAccessSeeder::class, TicketsSeeder::class]);
         }
 
+        $this->loadTranslationsFrom(__DIR__ . '/../../lang', 'tickets');
+        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'tickets');
+
+        $this->registerListeners();
+
         $this->withRouting(
             web: __DIR__ . '/../../routes/web.php',
             api: __DIR__ . '/../../routes/api.php',
             commands: __DIR__ . '/../../routes/console.php',
             channels: __DIR__ . '/../../routes/channels.php',
         );
+    }
+
+    /**
+     * The one place the layer's side effects are wired, so a reader never has to open a
+     * model to discover what reacts to it.
+     */
+    private function registerListeners(): void
+    {
+        Event::listen(TicketAssigned::class, NotifyTechnicianOfTicketAssignment::class);
     }
 
     /**
