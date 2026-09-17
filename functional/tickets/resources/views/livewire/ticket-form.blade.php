@@ -70,4 +70,8 @@
             </button>
         @endif
     </form>
+
+    @if ($ticket)
+        <livewire:tickets.attachments :ticket="$ticket" />
+    @endif
 </div>

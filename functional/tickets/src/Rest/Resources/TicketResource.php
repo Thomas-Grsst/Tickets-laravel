@@ -3,13 +3,13 @@
 namespace Functional\Tickets\Rest\Resources;
 
 use Functional\Tickets\Enums\TicketPriority;
+use Functional\Tickets\Models\Ticket;
 use Functional\Tickets\Rest\Actions\AssignTicketAction;
 use Functional\Tickets\Rest\Actions\CloseTicketAction;
 use Functional\Tickets\Rest\Actions\ReopenTicketAction;
 use Functional\Tickets\Rest\Actions\ResolveTicketAction;
 use Functional\Tickets\Rest\Actions\StartTicketProgressAction;
 use Functional\Tickets\Rest\Actions\UnassignTicketAction;
-use Functional\Tickets\Models\Ticket;
 use Functional\Users\Rest\Resources\UserResource;
 use Illuminate\Validation\Rule;
 use Lomkit\Rest\Actions\Action;
@@ -55,6 +55,7 @@ class TicketResource extends Resource
                 ->prohibitedOnCreation()
                 ->prohibitedOnUpdate(),
             HasMany::make('comments', CommentResource::class),
+            HasMany::make('attachments', AttachmentResource::class),
         ];
     }
 

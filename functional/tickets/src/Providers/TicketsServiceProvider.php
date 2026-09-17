@@ -6,8 +6,14 @@ use Functional\Tickets\Access\Controls\TicketControl;
 use Functional\Tickets\Database\Seeders\TicketAccessSeeder;
 use Functional\Tickets\Database\Seeders\TicketsSeeder;
 use Functional\Tickets\Events\TicketAssigned;
+use Functional\Tickets\Listeners\DeleteStoredAttachmentFile;
+use Functional\Tickets\Listeners\DeleteTicketAttachments;
 use Functional\Tickets\Listeners\NotifyTechnicianOfTicketAssignment;
+use Functional\Tickets\Livewire\TicketAttachments;
+use Functional\Tickets\Models\Attachment;
+use Functional\Tickets\Models\Ticket;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Lomkit\Access\Access;
 use Xefi\LaravelOSDD\LayerServiceProvider;
 
@@ -25,6 +31,8 @@ class TicketsServiceProvider extends LayerServiceProvider
 
         $this->registerListeners();
 
+        Livewire::component('tickets.attachments', TicketAttachments::class);
+
         $this->withRouting(
             web: __DIR__ . '/../../routes/web.php',
             api: __DIR__ . '/../../routes/api.php',
@@ -40,6 +48,14 @@ class TicketsServiceProvider extends LayerServiceProvider
     private function registerListeners(): void
     {
         Event::listen(TicketAssigned::class, NotifyTechnicianOfTicketAssignment::class);
+
+        Attachment::deleted(static function (Attachment $attachment): void {
+            app(DeleteStoredAttachmentFile::class)($attachment);
+        });
+
+        Ticket::forceDeleting(static function (Ticket $ticket): void {
+            app(DeleteTicketAttachments::class)($ticket);
+        });
     }
 
     /**
@@ -48,6 +64,8 @@ class TicketsServiceProvider extends LayerServiceProvider
      */
     public function register(): void
     {
+        $this->overrideConfigFrom(__DIR__ . '/../../config/tickets.php', 'tickets');
+
         (new Access())->addControl(new TicketControl());
     }
 }

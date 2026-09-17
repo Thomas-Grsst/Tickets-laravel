@@ -89,6 +89,12 @@ class Ticket extends Model
         return $this->hasMany(Comment::class);
     }
 
+    /** @return HasMany<Attachment, $this> */
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(Attachment::class);
+    }
+
     public function prunable(): Builder
     {
         return static::where('deleted_at', '<=', now()->subDays(self::SOFT_DELETED_RETENTION_DAYS));

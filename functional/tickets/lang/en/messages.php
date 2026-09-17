@@ -20,6 +20,25 @@ return [
         'critical' => 'Critical',
     ],
 
+    'attachments' => [
+        'title' => 'Attachments',
+        'empty' => 'No file attached to this ticket yet.',
+        'upload' => 'Attach file',
+        'delete' => 'Remove',
+        'kind' => [
+            'image' => 'Image',
+            'document' => 'Document',
+            'archive' => 'Archive',
+        ],
+        'success' => [
+            'uploaded' => 'File attached.',
+            'deleted' => 'Attachment removed.',
+        ],
+        'error' => [
+            'unsupported_type' => 'Files of type :type cannot be attached to a ticket.',
+        ],
+    ],
+
     'nav' => [
         'tickets' => 'Tickets',
         'new_ticket' => 'New ticket',

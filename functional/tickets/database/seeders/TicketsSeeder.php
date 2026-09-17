@@ -5,6 +5,7 @@ namespace Functional\Tickets\Database\Seeders;
 use DateTimeInterface;
 use Functional\Tickets\Enums\TicketPriority;
 use Functional\Tickets\Enums\TicketStatus;
+use Functional\Tickets\Models\Attachment;
 use Functional\Tickets\Models\Comment;
 use Functional\Tickets\Models\Ticket;
 use Functional\Users\Models\User;
@@ -29,6 +30,13 @@ class TicketsSeeder extends Seeder
                     ->count(faker()->number(1, 4))
                     ->for($ticket)
                     ->recycle($commentAuthors)
+                    ->create();
+
+                Attachment::factory()
+                    ->count(faker()->number(0, 2))
+                    ->for($ticket)
+                    ->recycle($commentAuthors)
+                    ->withStoredFile()
                     ->create();
             }
         }
